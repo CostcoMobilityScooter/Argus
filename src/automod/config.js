@@ -1,0 +1,40 @@
+module.exports = {
+  badWords: {
+    enabled: true,
+    words: ['badword1', 'badword2', 'badword3'],
+    action: 'delete',
+    message: '🚫 Your message was removed for containing a banned word.',
+  },
+  antiSpam: {
+    enabled: true,
+    maxMessages: 5,
+    timeWindow: 4000,
+    action: 'timeout',
+    timeoutDuration: 60000,
+    message: '🚫 Stop spamming! You have been timed out.',
+  },
+  antiLink: {
+    enabled: true,
+    blockInvites: true,
+    blockAllLinks: false,
+    ignoredRoles: [],
+    message: '🚫 Links are not allowed in this server.',
+  },
+  capsFilter: {
+    enabled: true,
+    minLength: 10,
+    maxCapsPercent: 70,
+    message: '🚫 Please don\'t use excessive caps.',
+  },
+  antiRaid: {
+    enabled: true,
+    joinThreshold: 10,
+    joinWindow: 10000,
+    action: 'kick',
+    lockdownMessage: '🔒 Raid detected! The server has been locked down.',
+    logChannelName: 'mod-logs',
+  },
+  ignoredChannels: ['bot-commands', 'staff'],
+  ignoredRoles: ['Admin', 'Moderator', 'Staff'],
+  logChannelName: 'mod-logs',
+};
