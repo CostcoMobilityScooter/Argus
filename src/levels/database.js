@@ -15,7 +15,12 @@ db.exec(`
     level     INTEGER DEFAULT 0,
     messages  INTEGER DEFAULT 0,
     PRIMARY KEY (user_id, guild_id)
-  )
+  );
+  CREATE TABLE IF NOT EXISTS guild_settings (
+    guild_id        TEXT PRIMARY KEY,
+    welcome_channel TEXT,
+    log_channel     TEXT
+  );
 `);
 
 function getUser(userId, guildId) {
@@ -44,4 +49,22 @@ function xpForNextLevel(level) {
   return Math.floor(100 * (level + 1) * 1.5);
 }
 
-module.exports = { getUser, addXP, setLevel, getLeaderboard, xpForNextLevel };
+function setWelcomeChannel(guildId, channelId) {
+  db.prepare('INSERT INTO guild_settings (guild_id, welcome_channel) VALUES (?, ?) ON CONFLICT(guild_id) DO UPDATE SET welcome_channel = ?').run(guildId, channelId, channelId);
+}
+
+function getWelcomeChannel(guildId) {
+  const row = db.prepare('SELECT welcome_channel FROM guild_settings WHERE guild_id = ?').get(guildId);
+  return row?.welcome_channel ?? null;
+}
+
+function setLogChannel(guildId, channelId) {
+  db.prepare('INSERT INTO guild_settings (guild_id, log_channel) VALUES (?, ?) ON CONFLICT(guild_id) DO UPDATE SET log_channel = ?').run(guildId, channelId, channelId);
+}
+
+function getLogChannel(guildId) {
+  const row = db.prepare('SELECT log_channel FROM guild_settings WHERE guild_id = ?').get(guildId);
+  return row?.log_channel ?? null;
+}
+
+module.exports = { getUser, addXP, setLevel, getLeaderboard, xpForNextLevel, setWelcomeChannel, getWelcomeChannel, setLogChannel, getLogChannel };

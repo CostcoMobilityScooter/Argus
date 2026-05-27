@@ -1,5 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 const ms = require('ms');
+const { sendLog } = require('../utils/logger');
+
+const MOD_COMMANDS = ['ban', 'kick', 'timeout', 'warn', 'purge'];
 
 module.exports = {
   name: 'interactionCreate',
@@ -32,6 +35,32 @@ module.exports = {
 
     try {
       await command.execute(interaction, client);
+
+      // ── Log moderation commands ───────────────────────────
+      if (MOD_COMMANDS.includes(command.data.name) && interaction.guild) {
+        const target = interaction.options.getMember?.('user') ?? interaction.options.getUser?.('user');
+        const reason = interaction.options.getString?.('reason') ?? 'No reason provided';
+
+        const colorMap = {
+          ban:     0xff4444,
+          kick:    0xfee75c,
+          timeout: 0xeb459e,
+          warn:    0xfee75c,
+          purge:   0x5865f2,
+        };
+
+        await sendLog(interaction.guild, {
+          color: colorMap[command.data.name] ?? 0x5865f2,
+          title: `🔨 Moderation — /${command.data.name}`,
+          fields: [
+            { name: '👮 Moderator', value: `${interaction.user.tag} (${interaction.user.id})`, inline: true },
+            { name: '👤 Target',    value: target ? `${target.user?.tag ?? target.tag} (${target.id})` : 'N/A', inline: true },
+            { name: '📝 Reason',    value: reason },
+          ],
+          footer: `Used in #${interaction.channel.name}`,
+        });
+      }
+
     } catch (err) {
       console.error(`[Command Error] /${command.data.name}:`, err);
       const errEmbed = new EmbedBuilder().setColor(0xff4444).setTitle('❌ Something went wrong').setDescription('An unexpected error occurred.').setTimestamp();
