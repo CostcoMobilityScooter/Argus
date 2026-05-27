@@ -1,6 +1,6 @@
 module.exports = {
   badWords: {
-    enabled: true,
+    enabled: false,
     words: ['nigger', 'faggot', 'cunt', 'slut', 'retard', 'spic', 'nga', 'tranny', 'border hopper', 'gonk', 'chink', 'kike', 'jew', 'christian', 'arab', 'white supremacist', 'whore', ''  ],
     action: 'delete',
     message: '🚫 Your message was removed for containing a banned word.',
